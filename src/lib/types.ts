@@ -46,6 +46,7 @@ export interface AppSettings {
   integration_name: string;
   webhook_url: string;
   production_webhook_url: string;
+  webhook_mode: 'test' | 'production';
   request_method: RequestMode;
   auth_type: IntegrationAuthType;
   auth_token: string;

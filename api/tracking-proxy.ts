@@ -4,6 +4,7 @@ type ProxyPayload = {
   trackingNumber?: string;
   webhookUrl?: string;
   productionWebhookUrl?: string;
+  webhookMode?: 'test' | 'production';
   requestMethod?: 'GET' | 'POST';
   authType?: 'none' | 'bearer' | 'api_key' | 'custom_header';
   authToken?: string;
@@ -50,7 +51,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const payload = typeof req.body === 'string' ? (JSON.parse(req.body) as ProxyPayload) : (req.body as ProxyPayload);
-  const webhookUrl = (payload.productionWebhookUrl || payload.webhookUrl || '').trim();
+  const webhookUrlCandidate =
+    payload.webhookMode === 'production'
+      ? payload.productionWebhookUrl || payload.webhookUrl || ''
+      : payload.webhookUrl || payload.productionWebhookUrl || '';
+  const webhookUrl = webhookUrlCandidate.trim();
   const trackingNumber = (payload.trackingNumber || '').trim();
 
   if (!webhookUrl) {

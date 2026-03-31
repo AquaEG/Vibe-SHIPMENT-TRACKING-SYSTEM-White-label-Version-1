@@ -82,7 +82,7 @@ export function IntegrationSettingsPage() {
               <Field>
                 <FieldLabel>Webhook / API URL</FieldLabel>
                 <Input value={draft.webhook_url} onChange={(event) => setDraft({ ...draft, webhook_url: event.target.value })} />
-                <FieldDescription>Keep your current test webhook here if you already have one.</FieldDescription>
+                <FieldDescription>Use this for testing mode.</FieldDescription>
               </Field>
               <Field>
                 <FieldLabel>Production webhook URL</FieldLabel>
@@ -91,11 +91,22 @@ export function IntegrationSettingsPage() {
                   onChange={(event) => setDraft({ ...draft, production_webhook_url: event.target.value })}
                   placeholder="https://..."
                 />
-                <FieldDescription>Used when live tracking runs in production.</FieldDescription>
+                <FieldDescription>Use this for live mode in production.</FieldDescription>
               </Field>
               <Field>
                 <FieldLabel>Tracking parameter key</FieldLabel>
                 <Input value={draft.tracking_param_name} onChange={(event) => setDraft({ ...draft, tracking_param_name: event.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Webhook target</FieldLabel>
+                <Select
+                  value={draft.webhook_mode}
+                  onChange={(event) => setDraft({ ...draft, webhook_mode: event.target.value as AppSettings['webhook_mode'] })}
+                >
+                  <option value="test">Testing webhook</option>
+                  <option value="production">Production webhook</option>
+                </Select>
+                <FieldDescription>Choose which webhook the live integration uses right now.</FieldDescription>
               </Field>
             </div>
             <div className="grid gap-4 lg:grid-cols-3">

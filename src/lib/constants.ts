@@ -19,6 +19,7 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   integration_name: 'TrackFlow n8n',
   webhook_url: import.meta.env.VITE_DEFAULT_WEBHOOK_URL ?? '',
   production_webhook_url: import.meta.env.VITE_DEFAULT_PRODUCTION_WEBHOOK_URL ?? '',
+  webhook_mode: 'test',
   request_method: (import.meta.env.VITE_DEFAULT_REQUEST_METHOD ?? 'POST').toUpperCase() as 'GET' | 'POST',
   auth_type: (import.meta.env.VITE_DEFAULT_AUTH_TYPE ?? 'none') as AppSettings['auth_type'],
   auth_token: import.meta.env.VITE_DEFAULT_AUTH_TOKEN ?? '',

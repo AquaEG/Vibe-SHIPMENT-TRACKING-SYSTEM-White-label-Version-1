@@ -5,6 +5,7 @@ create table if not exists public.app_settings (
   integration_name text not null default 'TrackFlow n8n',
   webhook_url text not null default '',
   production_webhook_url text not null default '',
+  webhook_mode text not null default 'test' check (webhook_mode in ('test', 'production')),
   request_method text not null default 'POST' check (request_method in ('GET', 'POST')),
   auth_type text not null default 'none' check (auth_type in ('none', 'bearer', 'api_key', 'custom_header')),
   auth_token text not null default '',
@@ -164,6 +165,7 @@ select
   integration_name,
   webhook_url,
   production_webhook_url,
+  webhook_mode,
   request_method,
   content_type,
   tracking_param_name,
@@ -194,12 +196,13 @@ from public.branding_settings;
 grant select on public.public_app_settings to anon, authenticated;
 grant select on public.public_branding_settings to anon, authenticated;
 
-insert into public.app_settings (id, integration_name, webhook_url, production_webhook_url, request_method, auth_type, auth_token, auth_header_name, custom_headers_json, content_type, timeout_ms, tracking_param_name, request_body_template, live_mode_enabled, mock_mode_enabled)
+insert into public.app_settings (id, integration_name, webhook_url, production_webhook_url, webhook_mode, request_method, auth_type, auth_token, auth_header_name, custom_headers_json, content_type, timeout_ms, tracking_param_name, request_body_template, live_mode_enabled, mock_mode_enabled)
 values (
   1,
   'TrackFlow n8n',
   '',
   '',
+  'test',
   'POST',
   'none',
   '',
@@ -216,6 +219,7 @@ on conflict (id) do update set
   integration_name = excluded.integration_name,
   webhook_url = excluded.webhook_url,
   production_webhook_url = excluded.production_webhook_url,
+  webhook_mode = excluded.webhook_mode,
   request_method = excluded.request_method,
   auth_type = excluded.auth_type,
   auth_token = excluded.auth_token,

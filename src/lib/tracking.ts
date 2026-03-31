@@ -107,6 +107,15 @@ function buildRequestPayload(settings: AppSettings, trackingNumber: string) {
   }
 }
 
+function resolveWebhookUrl(settings: AppSettings) {
+  const testWebhook = settings.webhook_url.trim();
+  const productionWebhook = settings.production_webhook_url.trim();
+  if (settings.webhook_mode === 'production') {
+    return productionWebhook || testWebhook;
+  }
+  return testWebhook || productionWebhook;
+}
+
 async function readResponseBody(response: Response) {
   const contentType = response.headers.get('content-type') ?? '';
   if (contentType.includes('application/json')) {
@@ -148,6 +157,7 @@ async function trackViaProxy(settings: AppSettings, trackingNumber: string) {
       trackingNumber,
       webhookUrl: settings.webhook_url,
       productionWebhookUrl: settings.production_webhook_url,
+      webhookMode: settings.webhook_mode,
       requestMethod: settings.request_method,
       authType: settings.auth_type,
       authToken: settings.auth_token,
@@ -169,7 +179,7 @@ async function trackViaProxy(settings: AppSettings, trackingNumber: string) {
 }
 
 async function trackDirectLiveShipment(settings: AppSettings, trackingNumber: string) {
-  const webhookUrl = (settings.production_webhook_url || settings.webhook_url || '').trim();
+  const webhookUrl = resolveWebhookUrl(settings);
   if (!webhookUrl) {
     return trackingError('Webhook URL is not configured.');
   }

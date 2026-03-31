@@ -18,6 +18,7 @@ function hydrateAppSettings(settings: Partial<AppSettings> | null | undefined): 
     webhook_url: settings?.webhook_url ?? env.trackingProxyUrl ?? DEFAULT_APP_SETTINGS.webhook_url,
     production_webhook_url:
       settings?.production_webhook_url ?? env.trackingProxyUrl ?? DEFAULT_APP_SETTINGS.production_webhook_url,
+    webhook_mode: (settings?.webhook_mode ?? DEFAULT_APP_SETTINGS.webhook_mode) as AppSettings['webhook_mode'],
     request_method: (settings?.request_method ?? DEFAULT_APP_SETTINGS.request_method).toUpperCase() as 'GET' | 'POST',
     auth_type: (settings?.auth_type ?? DEFAULT_APP_SETTINGS.auth_type) as AppSettings['auth_type'],
     timeout_ms: Number(settings?.timeout_ms ?? DEFAULT_APP_SETTINGS.timeout_ms),

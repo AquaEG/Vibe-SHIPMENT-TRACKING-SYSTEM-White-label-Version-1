@@ -34,6 +34,7 @@ export interface Database {
           | 'integration_name'
           | 'webhook_url'
           | 'production_webhook_url'
+          | 'webhook_mode'
           | 'request_method'
           | 'content_type'
           | 'tracking_param_name'

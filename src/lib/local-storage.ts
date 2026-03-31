@@ -30,8 +30,8 @@ export function readLocalDatabase(): StoredDatabase {
   try {
     const parsed = JSON.parse(raw) as Partial<StoredDatabase>;
     return {
-      appSettings: parsed.appSettings ?? DEFAULT_APP_SETTINGS,
-      brandingSettings: parsed.brandingSettings ?? DEFAULT_BRANDING_SETTINGS,
+      appSettings: { ...DEFAULT_APP_SETTINGS, ...(parsed.appSettings ?? {}) },
+      brandingSettings: { ...DEFAULT_BRANDING_SETTINGS, ...(parsed.brandingSettings ?? {}) },
       trackingLogs: parsed.trackingLogs ?? DEFAULT_LOGS,
       mockShipments: parsed.mockShipments ?? DEFAULT_DEMO_MOCKS,
     };

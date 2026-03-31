@@ -17,10 +17,11 @@ export default defineConfig({
           req.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
           req.on('end', async () => {
             try {
-              const payload = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
+              const parsedPayload = JSON.parse(Buffer.concat(chunks).toString('utf8')) as {
                 trackingNumber?: string;
                 webhookUrl?: string;
                 productionWebhookUrl?: string;
+                webhookMode?: 'test' | 'production';
                 requestMethod?: 'GET' | 'POST';
                 authType?: string;
                 authToken?: string;
@@ -30,9 +31,28 @@ export default defineConfig({
                 timeoutMs?: number;
                 trackingParamName?: string;
                 requestBodyTemplate?: string;
-              };
+              } | undefined;
+              const payload: {
+                trackingNumber?: string;
+                webhookUrl?: string;
+                productionWebhookUrl?: string;
+                webhookMode?: 'test' | 'production';
+                requestMethod?: 'GET' | 'POST';
+                authType?: string;
+                authToken?: string;
+                authHeaderName?: string;
+                customHeadersJson?: Record<string, string>;
+                contentType?: string;
+                timeoutMs?: number;
+                trackingParamName?: string;
+                requestBodyTemplate?: string;
+              } = parsedPayload ?? {};
 
-              const webhookUrl = (payload.productionWebhookUrl || payload.webhookUrl || '').trim();
+              const webhookUrlCandidate =
+                payload.webhookMode === 'production'
+                  ? payload.productionWebhookUrl || payload.webhookUrl || ''
+                  : payload.webhookUrl || payload.productionWebhookUrl || '';
+              const webhookUrl = webhookUrlCandidate.trim();
               if (!webhookUrl) {
                 res.statusCode = 400;
                 res.setHeader('Content-Type', 'application/json');
