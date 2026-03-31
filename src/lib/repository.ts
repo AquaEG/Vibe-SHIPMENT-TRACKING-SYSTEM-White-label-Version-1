@@ -7,6 +7,10 @@ import type { AppSettings, BrandingSettings, MockShipment, TrackingLog } from '.
 
 const USE_SUPABASE = Boolean(supabase);
 
+function nonEmpty(value: unknown, fallback: string) {
+  return typeof value === 'string' && value.trim() ? value : fallback;
+}
+
 function hydrateAppSettings(settings: Partial<AppSettings> | null | undefined): AppSettings {
   const merged: AppSettings = {
     ...DEFAULT_APP_SETTINGS,
@@ -15,12 +19,12 @@ function hydrateAppSettings(settings: Partial<AppSettings> | null | undefined): 
       typeof settings?.custom_headers_json === 'string'
         ? safeJsonParse<Record<string, string>>(settings.custom_headers_json, {})
         : settings?.custom_headers_json ?? {},
-    webhook_url: settings?.webhook_url ?? env.trackingProxyUrl ?? DEFAULT_APP_SETTINGS.webhook_url,
+    webhook_url: nonEmpty(settings?.webhook_url, env.trackingProxyUrl || DEFAULT_APP_SETTINGS.webhook_url),
     production_webhook_url:
-      settings?.production_webhook_url ?? env.trackingProxyUrl ?? DEFAULT_APP_SETTINGS.production_webhook_url,
+      nonEmpty(settings?.production_webhook_url, env.trackingProxyUrl || DEFAULT_APP_SETTINGS.production_webhook_url),
     webhook_mode: (settings?.webhook_mode ?? DEFAULT_APP_SETTINGS.webhook_mode) as AppSettings['webhook_mode'],
-    request_method: (settings?.request_method ?? DEFAULT_APP_SETTINGS.request_method).toUpperCase() as 'GET' | 'POST',
-    auth_type: (settings?.auth_type ?? DEFAULT_APP_SETTINGS.auth_type) as AppSettings['auth_type'],
+    request_method: nonEmpty(settings?.request_method, DEFAULT_APP_SETTINGS.request_method).toUpperCase() as 'GET' | 'POST',
+    auth_type: nonEmpty(settings?.auth_type, DEFAULT_APP_SETTINGS.auth_type) as AppSettings['auth_type'],
     timeout_ms: Number(settings?.timeout_ms ?? DEFAULT_APP_SETTINGS.timeout_ms),
   };
   return merged;

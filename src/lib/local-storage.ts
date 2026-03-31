@@ -19,6 +19,10 @@ function createInitialData(): StoredDatabase {
   };
 }
 
+function nonEmpty(value: unknown, fallback: string) {
+  return typeof value === 'string' && value.trim() ? value : fallback;
+}
+
 export function readLocalDatabase(): StoredDatabase {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) {
@@ -30,7 +34,14 @@ export function readLocalDatabase(): StoredDatabase {
   try {
     const parsed = JSON.parse(raw) as Partial<StoredDatabase>;
     return {
-      appSettings: { ...DEFAULT_APP_SETTINGS, ...(parsed.appSettings ?? {}) },
+      appSettings: {
+        ...DEFAULT_APP_SETTINGS,
+        ...(parsed.appSettings ?? {}),
+        webhook_url: nonEmpty(parsed.appSettings?.webhook_url, DEFAULT_APP_SETTINGS.webhook_url),
+        production_webhook_url: nonEmpty(parsed.appSettings?.production_webhook_url, DEFAULT_APP_SETTINGS.production_webhook_url),
+        request_method: nonEmpty(parsed.appSettings?.request_method, DEFAULT_APP_SETTINGS.request_method) as AppSettings['request_method'],
+        auth_type: nonEmpty(parsed.appSettings?.auth_type, DEFAULT_APP_SETTINGS.auth_type) as AppSettings['auth_type'],
+      },
       brandingSettings: { ...DEFAULT_BRANDING_SETTINGS, ...(parsed.brandingSettings ?? {}) },
       trackingLogs: parsed.trackingLogs ?? DEFAULT_LOGS,
       mockShipments: parsed.mockShipments ?? DEFAULT_DEMO_MOCKS,
