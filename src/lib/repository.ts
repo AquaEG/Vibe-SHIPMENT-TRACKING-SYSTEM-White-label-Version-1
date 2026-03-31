@@ -154,9 +154,10 @@ export async function listMockShipments() {
     if (!client) return readLocalDatabase().mockShipments;
     const { data, error } = await client.from('mock_shipments' as any).select('*').order('updated_at', { ascending: false });
     if (error) throw error;
-    return data;
+    return data?.length ? data : DEFAULT_DEMO_MOCKS;
   }
-  return readLocalDatabase().mockShipments;
+  const local = readLocalDatabase().mockShipments;
+  return local.length ? local : DEFAULT_DEMO_MOCKS;
 }
 
 export async function saveMockShipment(shipment: MockShipment) {
