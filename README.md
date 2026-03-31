@@ -2,7 +2,7 @@
 
 TrackFlow is a white-label shipment tracking SaaS demo built with React, Vite, TypeScript, Tailwind CSS, and Supabase.
 
-## What’s included
+## What is included
 
 - Public shipment tracking portal
 - Admin dashboard
