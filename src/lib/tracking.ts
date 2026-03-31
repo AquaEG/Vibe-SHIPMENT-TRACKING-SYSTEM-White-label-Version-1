@@ -267,12 +267,6 @@ export async function trackShipment(trackingNumber: string) {
   const settings = await getPublicAppSettings();
   const startedAt = performance.now();
 
-  if (settings.mock_mode_enabled) {
-    const result = await trackMockShipment(cleaned);
-    const log = await createLog(cleaned, 'mock', result, { trackingNumber: cleaned }, toRecord(result), Math.round(performance.now() - startedAt));
-    return { result, log };
-  }
-
   if (settings.live_mode_enabled) {
     const result = await trackLiveShipment(settings, cleaned);
     const log = await createLog(
@@ -286,9 +280,15 @@ export async function trackShipment(trackingNumber: string) {
     return { result, log };
   }
 
+  if (settings.mock_mode_enabled) {
+    const result = await trackMockShipment(cleaned);
+    const log = await createLog(cleaned, 'mock', result, { trackingNumber: cleaned }, toRecord(result), Math.round(performance.now() - startedAt));
+    return { result, log };
+  }
+
   const result: TrackingError = {
     success: false,
-    error: 'Tracking is currently unavailable. Enable mock or live mode in admin settings.',
+    error: 'Tracking is currently unavailable. Enable live or mock mode in admin settings.',
   };
   const log = await createLog(cleaned, 'mock', result, { trackingNumber: cleaned }, toRecord(result), Math.round(performance.now() - startedAt));
   return { result, log };
